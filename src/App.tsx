@@ -15,7 +15,7 @@ import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
 export default function App() {
-  const [theme, setTheme] = useState<"light" | "dark" >(() => {
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("theme");
       return (saved as "light" | "dark") || "dark";
@@ -75,4 +75,3 @@ export default function App() {
     </div>
   );
 }
-

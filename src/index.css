@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Amsterdam+One&family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Amsterdam+One&family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -50,7 +50,9 @@
 html {
   scroll-behavior: smooth;
   background-color: var(--bg-primary);
-  transition: background-color 0.4s ease, color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
 }
 
 body {
@@ -59,12 +61,17 @@ body {
   font-family: var(--font-sans);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.4s ease, color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
 }
 
 /* Hide native cursor if browser supports fine pointer */
 @media (pointer: fine) {
-  a, button, [role="button"], .interactive {
+  a,
+  button,
+  [role="button"],
+  .interactive {
     cursor: none !important;
   }
 }
@@ -89,4 +96,3 @@ body {
   background-color: var(--accent-dim);
   color: var(--fg-primary);
 }
-
