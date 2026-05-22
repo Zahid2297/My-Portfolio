@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Amsterdam+One&family=Alex+Brush&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=JetBrains+Mono:wght@300;400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #000000;
+  --fg-primary: #f5f3ff;
+  --accent: #a78bfa;
+  --accent-dim: rgba(167, 139, 250, 0.08);
+  --divider: rgba(167, 139, 250, 0.18);
+  --fg-muted: rgba(245, 243, 255, 0.55);
+
+  /* Nebula variables in dark mode */
+  --nebula-1: rgba(167, 139, 250, 0.08);
+  --nebula-2: rgba(139, 92, 246, 0.06);
+  --nebula-3: rgba(167, 139, 250, 0.03);
+}
+
+.light {
+  --bg-primary: #faf9ff;
+  --fg-primary: #1e1b4b;
+  --accent: #6366f1;
+  --accent-dim: rgba(99, 102, 241, 0.12);
+  --divider: rgba(99, 102, 241, 0.2);
+  --fg-muted: rgba(30, 27, 75, 0.58);
+
+  /* Nebula variables in light mode (Celestial Sunrise/Sky Watercolor) */
+  --nebula-1: rgba(99, 102, 241, 0.16);
+  --nebula-2: rgba(236, 72, 153, 0.14);
+  --nebula-3: rgba(253, 186, 116, 0.18);
+}
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-obsidian: var(--bg-primary);
+  --color-cream: var(--fg-primary);
+  --color-gold: var(--accent);
+  --color-gold-dim: var(--accent-dim);
+  --color-gold-mid: var(--divider);
+  --color-muted-cream: var(--fg-muted);
+
+  --color-nebula-1: var(--nebula-1);
+  --color-nebula-2: var(--nebula-2);
+  --color-nebula-3: var(--nebula-3);
+}
+
+/* Custom Base Overrides */
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--fg-primary);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Hide native cursor if browser supports fine pointer */
+@media (pointer: fine) {
+  a, button, [role="button"], .interactive {
+    cursor: none !important;
+  }
+}
+
+/* Custom scrollbar matching styling guide */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--divider);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Focus and selection colors */
+::selection {
+  background-color: var(--accent-dim);
+  color: var(--fg-primary);
+}
+
