@@ -10,11 +10,13 @@ export interface Skill {
 
 export interface Project {
   id: string;
-  num: string;
   title: string;
   description: string;
   tags: string[];
-  link: string;
+  githubUrl: string;
+  liveUrl?: string;
+  imageUrl: string;
+  category: "work" | "personal" | "progress";
 }
 
 export interface SocialLink {

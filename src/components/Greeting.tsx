@@ -5,6 +5,7 @@ const GREETINGS = [
   "Hello",
   "Hola",
   "Bonjour",
+  "ಹಲೋ",
   "Hallo",
   "Ciao",
   "Привет",
@@ -29,11 +30,18 @@ const GREETINGS = [
   "Olá",
 ];
 
-const FIRST_TWO = ["Hello", "مرحبا"];
-const ALL_LANGUAGES = GREETINGS.filter(
-  (g) => g !== FIRST_TWO[0] && g !== FIRST_TWO[1],
-);
-const SECOND_PHASE_DURATION = 3000;
+const OPENING = ["Hello", "مرحبا", "Bonjour", "ಹಲೋ"] as const;
+const SEQUENCE = [
+  ...OPENING,
+  ...GREETINGS.filter((g) => !(OPENING as readonly string[]).includes(g)),
+];
+const KANNADA_RANGE = /[\u0C80-\u0CFF]/;
+
+function holdMs(index: number) {
+  if (index < 4) return 1000;
+  const progress = (index - 4) / Math.max(1, SEQUENCE.length - 5);
+  return Math.round(180 - 100 * progress);
+}
 
 interface GreetingProps {
   onFinish: () => void;
@@ -41,7 +49,8 @@ interface GreetingProps {
 
 export default function Greeting({ onFinish }: GreetingProps) {
   const [visible, setVisible] = useState(true);
-  const [displayText, setDisplayText] = useState(FIRST_TWO[0]);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const displayText = SEQUENCE[displayIndex];
 
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
@@ -49,39 +58,26 @@ export default function Greeting({ onFinish }: GreetingProps) {
 
     let cycle: ReturnType<typeof setTimeout> | null = null;
     let endTimeout: ReturnType<typeof setTimeout> | null = null;
+    let idx = 0;
 
-    const phase1 = setTimeout(() => {
-      setDisplayText(FIRST_TWO[1]);
-    }, 1000);
-
-    const phase2 = setTimeout(() => {
-      const minPer = 80;
-      const maxPer = 180;
-      const steps = ALL_LANGUAGES.length;
-      let idx = 0;
-      setDisplayText(ALL_LANGUAGES[idx]);
-
-      const scheduleNext = () => {
+    const scheduleNext = () => {
+      cycle = setTimeout(() => {
         idx += 1;
-        if (idx < ALL_LANGUAGES.length) {
-          setDisplayText(ALL_LANGUAGES[idx]);
-          const progress = idx / Math.max(1, steps - 1);
-          const per = Math.round(maxPer - (maxPer - minPer) * progress);
-          cycle = setTimeout(scheduleNext, per);
+        if (idx < SEQUENCE.length) {
+          setDisplayIndex(idx);
+          scheduleNext();
         } else {
           endTimeout = setTimeout(() => {
             onFinish();
             setVisible(false);
           }, 200);
         }
-      };
+      }, holdMs(idx));
+    };
 
-      cycle = setTimeout(scheduleNext, Math.round((maxPer + minPer) / 2));
-    }, 2000);
+    scheduleNext();
 
     return () => {
-      clearTimeout(phase1);
-      clearTimeout(phase2);
       if (cycle) clearTimeout(cycle);
       if (endTimeout) clearTimeout(endTimeout);
       document.body.style.overflow = prevOverflow;
@@ -105,12 +101,16 @@ export default function Greeting({ onFinish }: GreetingProps) {
           <motion.div className="flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.h1
-                key={displayText}
+                key={`${displayIndex}-${displayText}`}
                 initial={{ opacity: 0, y: 8, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -6, scale: 0.96 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className="text-center text-[clamp(2rem,9vw,5rem)] font-serif italic text-gold drop-shadow-[0_8px_24px_rgba(167,139,250,0.25)]"
+                className={`text-center text-[clamp(2rem,9vw,5rem)] text-gold drop-shadow-[0_8px_24px_rgba(167,139,250,0.25)] ${
+                  KANNADA_RANGE.test(displayText)
+                    ? "font-kannada not-italic"
+                    : "font-serif italic"
+                }`}
               >
                 {displayText}
               </motion.h1>

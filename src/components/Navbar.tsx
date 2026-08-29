@@ -305,9 +305,6 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
                 onClick={() => handleSelectSection("about")}
                 className="absolute top-[8%] lg:top-[12%] left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[6px] group cursor-none focus:outline-none bg-transparent border-0"
               >
-                <span className="font-mono text-[9px] text-gold/50 tracking-widest">
-                  01
-                </span>
                 <span className="font-sans text-xs md:text-sm font-bold tracking-widest text-cream uppercase transition-colors group-hover:text-gold">
                   About
                 </span>
@@ -323,9 +320,6 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
                 onClick={() => handleSelectSection("skills")}
                 className="absolute top-1/2 left-[92%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[6px] group cursor-none focus:outline-none bg-transparent border-0"
               >
-                <span className="font-mono text-[9px] text-gold/50 tracking-widest">
-                  02
-                </span>
                 <span className="font-sans text-xs md:text-sm font-bold tracking-widest text-cream uppercase transition-colors group-hover:text-gold">
                   Skills
                 </span>
@@ -341,9 +335,6 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
                 onClick={() => handleSelectSection("projects")}
                 className="absolute bottom-[8%] lg:bottom-[12%] left-1/2 -translate-x-1/2 translate-y-1/2 flex flex-col items-center gap-[6px] group cursor-none focus:outline-none bg-transparent border-0"
               >
-                <span className="font-mono text-[9px] text-gold/50 tracking-widest">
-                  03
-                </span>
                 <span className="font-sans text-xs md:text-sm font-bold tracking-widest text-cream uppercase transition-colors group-hover:text-gold">
                   Projects
                 </span>
@@ -359,9 +350,6 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
                 onClick={() => handleSelectSection("contact")}
                 className="absolute top-1/2 left-[8%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[6px] group cursor-none focus:outline-none bg-transparent border-0"
               >
-                <span className="font-mono text-[9px] text-gold/50 tracking-widest">
-                  04
-                </span>
                 <span className="font-sans text-xs md:text-sm font-bold tracking-widest text-cream uppercase transition-colors group-hover:text-gold">
                   Contact
                 </span>

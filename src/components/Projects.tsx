@@ -1,73 +1,260 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import React, { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { ExternalLink, Github } from "lucide-react";
 import { Project } from "../types";
+import ourownfmImg from "../assets/projects/ourownfm.png";
+import madlabsImg from "../assets/projects/madlabs.png";
+import leadvaultImg from "../assets/projects/leadvault.png";
+import mazinImg from "../assets/projects/mazin-portfolio.png";
+import aiReviewerImg from "../assets/projects/ai-code-reviewer.png";
+import walletImg from "../assets/projects/digital-wallet.png";
 
-const PROJECTS_DATA: (Project & { imageUrl: string })[] = [
+type FilterId = "all" | "work" | "personal" | "progress";
+
+const FILTERS: { id: FilterId; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "work", label: "Work" },
+  { id: "personal", label: "Personal Projects" },
+  { id: "progress", label: "In progress" },
+];
+
+const PROJECTS_DATA: Project[] = [
   {
-    id: "devconnect",
-    num: "01",
-    title: "DevConnect",
-    description: "A social platform for developers with real-time messaging, profile showcasing, and community post sharing. Built end-to-end on the MERN stack.",
-    tags: ["React", "Node.js", "MongoDB", "Socket.io"],
-    link: "#",
-    imageUrl: "https://picsum.photos/seed/devconnect/800/600",
+    id: "ourownfm",
+    title: "OurOwn Facilities Management",
+    description:
+      "Facilities operations platform for sites, service workflows, and day-to-day FM delivery.",
+    tags: ["React", "JavaScript", "Vite"],
+    githubUrl: "https://github.com/Zahid2297/ourownfm",
+    liveUrl: "https://ourownfm.com/",
+    imageUrl: ourownfmImg,
+    category: "work",
   },
   {
-    id: "shopflow",
-    num: "02",
-    title: "ShopFlow",
-    description: "Full-stack e-commerce platform featuring product management, dynamic cart, secure Stripe payment integration, and a comprehensive admin dashboard.",
-    tags: ["React", "Express", "Stripe", "JWT"],
-    link: "#",
-    imageUrl: "https://picsum.photos/seed/shop/800/600",
+    id: "madlabs",
+    title: "Madlabs Global",
+    description:
+      "IT consulting site with sticky storytelling that turns visitors into qualified leads.",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS"],
+    githubUrl: "https://github.com/Zahid2297/Madlabs",
+    liveUrl: "https://madlabs-two.vercel.app/",
+    imageUrl: madlabsImg,
+    category: "work",
   },
   {
-    id: "tasksync",
-    num: "03",
-    title: "TaskSync",
-    description: "Real-time project management app with drag-and-drop kanban boards, live team collaboration, and deadline tracking across multiple workspaces.",
-    tags: ["React", "Node.js", "WebSockets", "Redux"],
-    link: "#",
-    imageUrl: "https://picsum.photos/seed/workspace/800/600",
+    id: "leadvault",
+    title: "LeadVault",
+    description:
+      "B2B email finder that searches, reveals, and exports verified contacts with credits.",
+    tags: ["Next.js", "PostgreSQL", "Python"],
+    githubUrl: "https://github.com/faizmd26/Lead-Vault",
+    liveUrl: "https://leadvault.to/",
+    imageUrl: leadvaultImg,
+    category: "work",
+  },
+  {
+    id: "mazin-portfolio",
+    title: "Mazin Portfolio",
+    description:
+      "Personal site for a video editor to showcase reels, craft, and booked work.",
+    tags: ["TypeScript", "React", "Tailwind CSS"],
+    githubUrl: "https://github.com/Zahid2297/mazin-portfolio",
+    imageUrl: mazinImg,
+    category: "work",
+  },
+  {
+    id: "ai-code-review",
+    title: "AI Powered Code Reviewer",
+    description:
+      "AI-assisted code review that flags issues and suggests cleaner patches in context.",
+    tags: ["TypeScript", "OpenAI API", "React"],
+    githubUrl: "https://github.com/Zahid2297/Ai-Powered-Code-review",
+    liveUrl: "https://ai-powered-code-review-brown.vercel.app",
+    imageUrl: aiReviewerImg,
+    category: "personal",
+  },
+  {
+    id: "stopwatch",
+    title: "Stopwatch & Timer",
+    description:
+      "Lightweight stopwatch and countdown timer with a clean, focused interface.",
+    tags: ["JavaScript", "HTML5", "CSS3"],
+    githubUrl: "https://github.com/Zahid2297/Stopwatch-and-Timer-App",
+    liveUrl: "https://zahid2297.github.io/Stopwatch-and-Timer-App/",
+    imageUrl:
+      "https://images.unsplash.com/photo-1501139083538-0139583c060f?auto=format&fit=crop&w=1400&q=80",
+    category: "personal",
+  },
+  {
+    id: "tic-tac-toe",
+    title: "Tic Tac Toe",
+    description:
+      "Classic two-player match with instant win checks and a snappy board feel.",
+    tags: ["JavaScript", "HTML5", "CSS3"],
+    githubUrl: "https://github.com/Zahid2297/Tic-Tac-Toe-game",
+    imageUrl:
+      "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=1400&q=80",
+    category: "personal",
+  },
+  {
+    id: "digital-wallet",
+    title: "Digital Wallet",
+    description:
+      "Secure wallet flows for storing funds, transfers, and transaction history.",
+    tags: ["Node.js", "Express.js", "MongoDB"],
+    githubUrl: "https://github.com/Zahid2297/Digital-Wallet-System",
+    imageUrl: walletImg,
+    category: "personal",
+  },
+  {
+    id: "corvian-ai",
+    title: "Corvian AI",
+    description:
+      "AI product surface in design — agents, workflows, and a calm operator UI.",
+    tags: ["TypeScript", "Inngest", "OpenAI API"],
+    githubUrl: "https://github.com/Zahid2297/corvian-ai",
+    imageUrl:
+      "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1400&q=80",
+    category: "progress",
   },
 ];
 
+function ActionIcon({
+  href,
+  label,
+  disabled,
+  children,
+}: {
+  href?: string;
+  label: string;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) {
+  const className =
+    "relative z-10 inline-flex h-9 w-9 items-center justify-center rounded-full border border-gold/20 bg-obsidian/80 text-gold/70 backdrop-blur-sm transition-all duration-300 hover:border-gold hover:text-gold hover:scale-110 hover:shadow-[0_0_18px_rgba(167,139,250,0.35)] cursor-none";
+
+  if (disabled || !href) {
+    return (
+      <span
+        aria-disabled="true"
+        title="Live link coming soon"
+        className={`${className} opacity-35 grayscale pointer-events-none`}
+      >
+        {children}
+        <span className="sr-only">{label} unavailable</span>
+      </span>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      onClick={(e) => e.stopPropagation()}
+      className={className}
+    >
+      {children}
+    </a>
+  );
+}
+
+function ProjectCard({ project }: { project: Project }) {
+  const inProgress = project.category === "progress";
+
+  return (
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 22 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 12, scale: 0.98 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className="project-card group/project relative flex flex-col overflow-hidden rounded-xl border border-gold/12 bg-obsidian/40 backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-gold/40 hover:shadow-[0_22px_50px_-28px_rgba(167,139,250,0.55)]"
+    >
+      <div className="relative bg-obsidian px-3 pt-3">
+        <div className="relative flex h-[210px] md:h-[230px] items-center justify-center overflow-hidden rounded-lg border border-gold/10 bg-black">
+          <img
+            src={project.imageUrl}
+            alt={project.title}
+            referrerPolicy="no-referrer"
+            className={`max-h-full max-w-full w-full h-full object-contain object-center transition-all duration-500 ease-out ${
+              inProgress
+                ? "blur-[8px] saturate-50 opacity-70 group-hover/project:blur-[6px] group-hover/project:opacity-85"
+                : "opacity-95 group-hover/project:opacity-100"
+            }`}
+          />
+
+          {inProgress && (
+            <div className="absolute inset-0 bg-obsidian/40">
+              <div className="absolute inset-4 rounded-md border border-dashed border-gold/30 p-2">
+                <div className="grid h-full grid-cols-3 gap-2 opacity-50">
+                  <span className="col-span-2 rounded-md border border-gold/25 bg-gold/5" />
+                  <span className="rounded-md border border-gold/25 bg-gold/5" />
+                  <span className="rounded-md border border-gold/20 bg-gold/[0.03]" />
+                  <span className="col-span-2 rounded-md border border-gold/20 bg-gold/[0.03]" />
+                </div>
+              </div>
+              <span className="absolute bottom-3 left-3 rounded-full border border-gold/30 bg-obsidian/80 px-3 py-1 font-mono text-[9px] uppercase tracking-[0.22em] text-gold">
+                In progress
+              </span>
+            </div>
+          )}
+
+          <div className="project-glaze-sheen rounded-lg" />
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col gap-3 p-5">
+        <h3 className="font-sans text-base font-bold tracking-wide text-cream transition-colors duration-300 group-hover/project:text-gold">
+          {project.title}
+        </h3>
+        <p className="font-sans text-sm font-light leading-relaxed text-cream/60 line-clamp-1">
+          {project.description}
+        </p>
+
+        <div className="mt-auto flex items-end justify-between gap-3 pt-2">
+          <div className="flex min-w-0 flex-wrap gap-1.5">
+            {project.tags.map((tag) => (
+              <span
+                key={tag}
+                className="font-mono text-[8px] uppercase tracking-wider px-2 py-0.5 border border-gold/12 text-gold/60 bg-gold/[0.03] transition-colors duration-300 group-hover/project:border-gold/30 group-hover/project:text-gold"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <ActionIcon href={project.githubUrl} label={`${project.title} GitHub repository`}>
+              <Github className="h-3.5 w-3.5" strokeWidth={1.8} />
+            </ActionIcon>
+            <ActionIcon
+              href={project.liveUrl}
+              label={`${project.title} live site`}
+              disabled={inProgress || !project.liveUrl}
+            >
+              <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.8} />
+            </ActionIcon>
+          </div>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
 export default function Projects() {
-  const [selectedProject, setSelectedProject] = useState<(Project & { imageUrl: string }) | null>(null);
+  const [filter, setFilter] = useState<FilterId>("all");
 
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const projectCardVariants = {
-    hidden: { y: 25, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.65, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
-  const openModal = (proj: (Project & { imageUrl: string }), e: React.MouseEvent) => {
-    e.preventDefault();
-    setSelectedProject(proj);
-  };
-
-  const closeModal = () => {
-    setSelectedProject(null);
-  };
+  const visibleProjects = useMemo(() => {
+    if (filter === "all") return PROJECTS_DATA;
+    return PROJECTS_DATA.filter((project) => project.category === filter);
+  }, [filter]);
 
   return (
     <section id="projects" className="relative py-28 px-6 md:px-14 z-10">
       <div className="max-w-[1140px] mx-auto">
-        
-        {/* Section label */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, x: -10 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -78,188 +265,53 @@ export default function Projects() {
           <span className="block w-10 h-[1px] bg-gold/25" />
         </motion.div>
 
-        {/* Heading */}
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
-          className="font-serif text-[clamp(2.2rem,5vw,3.5rem)] font-light leading-snug tracking-tight mb-16"
+          className="font-serif text-[clamp(2.2rem,5vw,3.5rem)] font-light leading-snug tracking-tight mb-8"
         >
           Featured <span className="text-gold italic font-bold">Projects</span>
         </motion.h2>
 
-        {/* Simplified & Creative Project Grid */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        <div
+          role="tablist"
+          aria-label="Filter projects"
+          className="mb-10 flex flex-wrap gap-2"
         >
-          {PROJECTS_DATA.map((proj) => (
-            <motion.div
-              key={proj.id}
-              variants={projectCardVariants}
-              onClick={(e) => openModal(proj, e)}
-              className="group relative flex flex-col justify-between overflow-hidden cursor-none bg-obsidian/30 border border-gold-mid transition-all duration-300 pointer-events-auto rounded-md"
-            >
-              {/* 1. Creative Project Image Container */}
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-obsidian-dim">
-                {/* Visual Image */}
-                <img
-                  src={proj.imageUrl}
-                  alt={proj.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                />
-                
-                {/* Thin overlay mesh */}
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/40 to-transparent opacity-80 group-hover:opacity-40 transition-opacity duration-500" />
-                
-                {/* Top tracking info */}
-                <div className="absolute top-4 left-4 right-4 flex justify-between items-center pointer-events-none">
-                  <span className="font-mono text-[9px] tracking-[0.25em] text-gold/60 uppercase">
-                    [ PROJECT_{proj.num} ]
-                  </span>
-                  
-                  {/* Subtle index mark */}
-                  <div className="w-5 h-5 rounded-full border border-gold/15 bg-obsidian/85 flex items-center justify-center font-serif text-[10px] text-gold italic">
-                    {proj.num}
-                  </div>
-                </div>
-              </div>
+          {FILTERS.map((item) => {
+            const active = filter === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setFilter(item.id)}
+                className={`cursor-none rounded-full border px-4 py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.14em] transition-all duration-300 ${
+                  active
+                    ? "border-gold bg-gold text-obsidian shadow-[0_0_20px_rgba(167,139,250,0.35)]"
+                    : "border-gold/18 bg-obsidian/30 text-cream/70 hover:border-gold/50 hover:text-gold"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
 
-              {/* 2. Simplified Information Panel */}
-              <div className="p-6 flex flex-col justify-between flex-grow">
-                <div>
-                  <h3 className="font-sans text-base font-bold text-cream tracking-wide group-hover:text-gold transition-colors duration-300 mb-2">
-                    {proj.title}
-                  </h3>
-                  <p className="font-sans text-xs md:text-sm text-cream/60 leading-relaxed font-light mb-6 line-clamp-2">
-                    {proj.description}
-                  </p>
-                </div>
-
-                {/* Tags and arrow details */}
-                <div className="flex items-center justify-between pt-4 border-t border-gold-mid">
-                  <div className="flex flex-wrap gap-1.5">
-                    {proj.tags.slice(0, 3).map((tag, tagIdx) => (
-                      <span
-                        key={tagIdx}
-                        className="font-mono text-[8px] uppercase tracking-wider px-2 py-0.5 border border-gold/10 text-gold/50 bg-gold/[0.01]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="font-mono text-[10px] text-gold/50 group-hover:text-gold group-hover:translate-x-1.5 transition-all duration-300">
-                    ↗
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+        <motion.div
+          layout
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7"
+        >
+          <AnimatePresence mode="popLayout">
+            {visibleProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </AnimatePresence>
         </motion.div>
       </div>
-
-      {/* Elegant Details Modal popup */}
-      <AnimatePresence>
-        {selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeModal}
-            className="fixed inset-0 z-[300] bg-obsidian/95 backdrop-blur-xl flex items-center justify-center p-4 md:p-6"
-          >
-            <motion.div
-              initial={{ scale: 0.95, y: 15 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 15 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              onClick={(e) => e.stopPropagation()}
-              className="relative max-w-2xl w-full border border-gold/20 bg-obsidian text-left outline-none rounded-lg overflow-hidden flex flex-col"
-            >
-              {/* Image Header with close cross */}
-              <div className="relative aspect-[16/9] w-full bg-obsidian-dim overflow-hidden">
-                <img
-                  src={selectedProject.imageUrl}
-                  alt={selectedProject.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover opacity-90"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-obsidian to-transparent" />
-                
-                <button
-                  onClick={closeModal}
-                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-obsidian/80 hover:bg-obsidian border border-gold/25 flex items-center justify-center text-gold cursor-none transition-all duration-200"
-                  aria-label="Close project modal"
-                >
-                  ✕
-                </button>
-
-                <div className="absolute bottom-4 left-6">
-                  <span className="font-mono text-[9px] tracking-widest text-gold/60 uppercase block mb-1">
-                    PROJECT // DETAILS_{selectedProject.num}
-                  </span>
-                  <h3 className="font-sans text-xl md:text-2xl font-bold text-cream tracking-wide">
-                    {selectedProject.title}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Modal Core Contents */}
-              <div className="p-6 md:p-8 space-y-6">
-                <p className="font-sans text-sm text-cream/80 leading-relaxed font-light">
-                  {selectedProject.description}
-                </p>
-
-                <p className="font-sans text-xs md:text-sm text-cream/50 leading-relaxed font-light">
-                  A cohesive digital solution designed to support multi-threaded responsive performance, seamless visual continuity, and optimized user flows. Developed with strict attention to modular layout paradigms.
-                </p>
-
-                {/* Stack overview */}
-                <div className="space-y-3">
-                  <h4 className="font-mono text-[9px] uppercase tracking-[0.2em] text-gold font-medium">Tools & Architecture</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedProject.tags.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="font-mono text-[9px] uppercase tracking-wider px-2.5 py-1 border border-gold/15 text-gold bg-gold/5"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Footer Actions */}
-                <div className="flex justify-end gap-3 pt-6 border-t border-gold/10">
-                  <button
-                    onClick={closeModal}
-                    className="px-5 py-2 font-sans text-[10px] tracking-widest uppercase border border-gold/20 text-cream hover:bg-gold/5 transition-colors cursor-none"
-                  >
-                    Close
-                  </button>
-                  <a
-                    href="#contact"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      closeModal();
-                      const el = document.getElementById("contact");
-                      if (el) el.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="px-6 py-2 font-sans text-[10px] tracking-widest uppercase bg-gold text-obsidian font-bold hover:opacity-90 transition-opacity cursor-none"
-                  >
-                    Discuss
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
