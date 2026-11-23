@@ -1,44 +1,14 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import React from "react";
+import { motion } from "motion/react";
 
-export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState("");
+interface ContactProps {
+  onInquire: () => void;
+}
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      setError("Please fill out all fields.");
-      return;
-    }
-
-    setError("");
-    setIsLoading(true);
-
-    // Simulate safe elegant submission API trigger
-    setTimeout(() => {
-      setIsLoading(false);
-      setSuccess(true);
-      setFormData({ name: "", email: "", message: "" });
-    }, 1200);
-  };
-
+export default function Contact({ onInquire }: ContactProps) {
   return (
     <section id="contact" className="relative py-28 px-6 md:px-14 z-10">
       <div className="max-w-[620px] mx-auto text-center">
-        {/* Section label */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -49,7 +19,6 @@ export default function Contact() {
           <span className="block w-10 h-[1px] bg-gold/30" />
         </motion.div>
 
-        {/* Heading */}
         <motion.h2
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -63,127 +32,24 @@ export default function Contact() {
 
         <p className="font-sans text-xs md:text-sm text-cream/48 leading-[1.85] font-light mb-12 max-w-md mx-auto">
           Open to full time roles, freelance projects, and exciting
-          collaborations. Let's build something great together.
+          collaborations. A short form opens WhatsApp with your answers filled in.
         </p>
 
-        {/* Interactive message form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-left mt-8 mb-12 max-w-[540px] mx-auto"
+        <button
+          type="button"
+          onClick={onInquire}
+          className="group relative inline-flex items-center gap-3 border border-gold px-8 py-3.5 font-sans text-[11px] font-bold tracking-[0.2em] text-gold uppercase transition-colors duration-450 overflow-hidden hover:text-obsidian cursor-none"
         >
-          <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
-              <div className="space-y-1 flex flex-col">
-                <label
-                  className="font-mono text-[8px] uppercase tracking-[0.2em] text-gold/45"
-                  htmlFor="name"
-                >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-cream/15 focus:border-gold py-2.5 text-sm text-cream placeholder-cream/20 focus:outline-none transition-colors font-sans rounded-none cursor-none"
-                  placeholder="Your Name"
-                  required
-                />
-              </div>
+          <span className="absolute inset-0 bg-gold translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-350 ease-out z-0" />
+          <span className="relative z-10">Start an inquiry</span>
+        </button>
 
-              <div className="space-y-1 flex flex-col">
-                <label
-                  className="font-mono text-[8px] uppercase tracking-[0.2em] text-gold/45"
-                  htmlFor="email"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full bg-transparent border-b border-cream/15 focus:border-gold py-2.5 text-sm text-cream placeholder-cream/20 focus:outline-none transition-colors font-sans rounded-none cursor-none"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1 flex flex-col">
-              <label
-                className="font-mono text-[8px] uppercase tracking-[0.2em] text-gold/45"
-                htmlFor="message"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                rows={3}
-                className="w-full bg-transparent border-b border-cream/15 focus:border-gold py-2.5 text-sm text-cream placeholder-cream/20 focus:outline-none transition-colors font-sans rounded-none resize-none cursor-none"
-                placeholder="Hi Mohammad, let's collaborate on..."
-                required
-              />
-            </div>
-
-            {error && (
-              <p className="text-red-400 font-mono text-[10px] tracking-wide">
-                {error}
-              </p>
-            )}
-
-            <AnimatePresence>
-              {success && (
-                <motion.p
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-gold font-mono text-[10px] tracking-wide"
-                >
-                  ✓ Message sent successfully. Speak to you soon!
-                </motion.p>
-              )}
-            </AnimatePresence>
-
-            <div className="pt-2 flex justify-center">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative inline-flex items-center justify-center gap-2.5 border border-gold/30 hover:border-gold bg-transparent px-8 py-3 font-sans text-[10px] font-bold tracking-[0.25em] text-gold uppercase transition-colors duration-300 overflow-hidden hover:bg-gold hover:text-black disabled:opacity-55 cursor-none"
-              >
-                <span>{isLoading ? "Transmitting..." : "Send Message"}</span>
-
-                {!isLoading && (
-                  <svg
-                    className="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
-                    width="10"
-                    height="10"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path d="M7 17L17 7M17 7H7M17 7v10" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </form>
-        </motion.div>
-
-        {/* Traditional direct mail support link */}
-        <div className="flex flex-col items-center gap-1 mt-6">
+        <div className="flex flex-col items-center gap-1 mt-10">
           <span className="font-mono text-[9px] uppercase tracking-widest text-[#5a564e]">
             Or direct contact
           </span>
           <a
-            href="mailto:zahed@email.com"
+            href="mailto:techpirate97@gmail.com"
             className="font-sans text-xs text-cream hover:text-gold tracking-widest border-b border-gold/25 pb-0.5 transition-colors duration-250 cursor-none"
           >
             techpirate97@gmail.com

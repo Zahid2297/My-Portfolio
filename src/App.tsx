@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { MotionConfig } from "motion/react";
 import Cursor from "./components/Cursor";
 import Backdrop from "./components/Backdrop";
 import Greeting from "./components/Greeting";
@@ -13,6 +14,8 @@ import Skills from "./components/Skills";
 import Projects from "./components/Projects";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import InquirySheet from "./components/InquirySheet";
+import { initAnalytics } from "./analytics";
 
 export default function App() {
   const [theme, setTheme] = useState<"light" | "dark">(() => {
@@ -23,6 +26,11 @@ export default function App() {
     return "dark";
   });
   const [showContent, setShowContent] = useState(false);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+
+  useEffect(() => {
+    initAnalytics();
+  }, []);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -39,6 +47,7 @@ export default function App() {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="relative min-h-screen bg-obsidian text-cream select-none overflow-x-hidden selection:bg-gold-dim selection:text-cream">
       <Greeting onFinish={() => setShowContent(true)} />
 
@@ -51,7 +60,11 @@ export default function App() {
           <Backdrop />
 
           {/* Modern floating inline header navbar */}
-          <Navbar theme={theme} toggleTheme={toggleTheme} />
+          <Navbar
+            theme={theme}
+            toggleTheme={toggleTheme}
+            onOpenInquiry={() => setInquiryOpen(true)}
+          />
 
           {/* Primary scrollable wrapper */}
           <main className="relative z-10 w-full">
@@ -65,13 +78,19 @@ export default function App() {
             <Projects />
 
             {/* Interactive message form and support triggers */}
-            <Contact />
+            <Contact onInquire={() => setInquiryOpen(true)} />
           </main>
 
           {/* Legal & social coordinates */}
           <Footer />
+
+          <InquirySheet
+            open={inquiryOpen}
+            onClose={() => setInquiryOpen(false)}
+          />
         </>
       )}
     </div>
+    </MotionConfig>
   );
 }

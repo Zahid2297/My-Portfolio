@@ -98,6 +98,11 @@ body {
   color: var(--fg-primary);
 }
 
+.inquiry-field option {
+  background-color: #0c0a14;
+  color: #f5f3ff;
+}
+
 @keyframes project-glaze {
   0% {
     transform: translateX(-140%) skewX(-18deg);

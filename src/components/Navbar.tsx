@@ -5,9 +5,14 @@ import { Orbit, Sun, Moon } from "lucide-react";
 interface NavbarProps {
   theme: "light" | "dark";
   toggleTheme: () => void;
+  onOpenInquiry: () => void;
 }
 
-export default function Navbar({ theme, toggleTheme }: NavbarProps) {
+export default function Navbar({
+  theme,
+  toggleTheme,
+  onOpenInquiry,
+}: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -347,7 +352,10 @@ export default function Navbar({ theme, toggleTheme }: NavbarProps) {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ delay: 0.39, duration: 0.4 }}
-                onClick={() => handleSelectSection("contact")}
+                onClick={() => {
+                  closeMenu();
+                  onOpenInquiry();
+                }}
                 className="absolute top-1/2 left-[8%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[6px] group cursor-none focus:outline-none bg-transparent border-0"
               >
                 <span className="font-sans text-xs md:text-sm font-bold tracking-widest text-cream uppercase transition-colors group-hover:text-gold">
